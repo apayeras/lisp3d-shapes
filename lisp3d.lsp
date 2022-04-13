@@ -1,4 +1,4 @@
-;(load 'lisp3d) -> per carregar es fitxer
+;(load 'lisp3d-shapes/lisp3d) -> per carregar es fitxer
 
 (defun inicia-patrons ()
     (putprop 'cub '((-0.5 0 -0.5)(0.5 0 -0.5)(0.5 0 0.5)(-0.5 0 0.5)(-0.5 1 -0.5)(0.5 1 -0.5)(0.5 1 0.5)(-0.5 1 0.5)) 'punts)
