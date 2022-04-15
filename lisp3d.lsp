@@ -3,6 +3,9 @@
 ;         Mauricio Gallardo
 ;         José Ramón Muñoz
 
+;; Pensar com borrar una figura de la pantalla sense alterar el seu color original +- Arreglat
+;; Pensar en si borram una figura de l'escena ja no la podem tornar a pintar - revisar octaedre no se pinta bé xd
+
 (defun inicia-patrons ()
     (putprop 'cub '((-0.5 0 -0.5)(0.5 0 -0.5)(0.5 0 0.5)(-0.5 0 0.5)(-0.5 1 -0.5)(0.5 1 -0.5)(0.5 1 0.5)(-0.5 1 0.5)) 'punts)
     (putprop 'cub '((1 2)(2 3)(3 4)(4 1)(1 5)(2 6)(3 7)(4 8)(5 6)(6 7)(7 8)(8 5)) 'arestes)
@@ -34,23 +37,81 @@
 (defun borra-figura (f)
     (cls-figura f)
     (putprop 'escena (borra f (get 'escena 'figures)) 'figures)
-    "Figura borrada"
+    "Figura eliminada"
 )
 
-(defun borra-figures
+(defun borra-figures ()
     (putprop 'escena nil 'figures)
     (cls)
 )
 
+(defun pinta-aresta (a f)
+    (move (realpart (round (+ (* (car (mult-vec-matriu (snoc '1 (agafa-element (car a) (get (get f 'patro) 'punts))) (get f 'matriu))) 40) 320)))
+    (realpart (round (+ (* (cadr (mult-vec-matriu (snoc '1 (agafa-element (car a) (get (get f 'patro) 'punts))) (get f 'matriu))) 40) 187))))
+    (draw (realpart (round (+ (* (car (mult-vec-matriu (snoc '1 (agafa-element (cadr a) (get (get f 'patro) 'punts))) (get f 'matriu))) 40) 320)))
+    (realpart (round (+ (* (cadr (mult-vec-matriu (snoc '1 (agafa-element (cadr a) (get (get f 'patro) 'punts))) (get f 'matriu))) 40) 187))))
+)
+
+
+(defun pinta-arestes (a f)
+    (cond ((null (car a)) nil)
+        (t (pinta-aresta (agafa-element (car a) (get (get f 'patro) 'arestes)) f) (pinta-arestes (cdr a) f))
+    )
+)
+
+(defun pinta-cares (c f)
+    (cond ((null (car c)) nil)
+          (t (pinta-arestes (car c) f) (pinta-cares (cdr c) f))
+    )
+)
+
 (defun pinta-figura (f)
+    (eval (cons 'color (get f 'color)))
+    (pinta-cares (get (get f 'patro) 'cares) f)
+    (color 0 0 0)
     "Pintada"
 )
 
 (defun cls-figura (f)
+    (putprop f (get f 'color) 'color-pre)
     (putprop f '(255 255 255) 'color)
     (pinta-figura f)
+    (putprop f (get f 'color-pre) 'color)
+    "Figura esborrada"
 )
 
+(defun snoc (x l) 
+    (cond ((null l) (cons x l))
+        (t (cons (car l) (snoc x (cdr l))))
+    )
+)
+
+(defun agafa-element (num l)
+    (cond ((= num 1) (car l))
+        (t (agafa-element (- num 1) (cdr l)))
+
+    )
+)
+
+(defun afegir-punts (l)
+    (cond ((null (cdr l)) (cons (snoc '1 (car l)) nil))
+        (t (cons (snoc '1 (car l)) (afegir-punts (cdr l))))
+    )
+)
+
+
+(defun mult-vec-matriu (l1 l2t)
+    (cond ((null (cdr l2t)) (cons (producte-escalar (cons l1 (cons (car l2t) nil))) nil))
+        (t (cons(producte-escalar (cons l1 (cons (car l2t) nil))) (mult-vec-matriu l1 (cdr l2t))))
+    )
+    
+)
+
+(defun mult-matriu (l1 l2)
+    (cond ((null (cdr l1)) (cons (mult-vec-matriu (car l1) (transposta l2)) nil))
+        (t (cons (mult-vec-matriu (car l1) (transposta l2)) (mult-matriu (cdr l1) l2)))
+    )
+)
 
 ; convertir grados a radianes
 (defun grausRadians (numberOfDegrees) 
@@ -93,11 +154,12 @@
 ; funcion multiplicar
 (defun mult (l)
 (cond ((null l) 1)
-(t (* (car l) (mult (cdr l)))))) 
+(t (* (car l) (mult (cdr l)))))
+)
 
 ; funcion producto escalar
-(defun producteEscalar (l)
-(apply '+ (mapcar 'mult (transposta l)))
+(defun producte-escalar (l)
+    (apply '+ (mapcar 'mult (transposta l)))
 )
 
 ; traspuesta de la matriz de translacion (2ª)
@@ -123,3 +185,4 @@
 (defun inicia-figura (f)
 
 )
+
