@@ -3,9 +3,6 @@
 ;         Mauricio Gallardo
 ;         José Ramón Muñoz
 
-;; Pensar com borrar una figura de la pantalla sense alterar el seu color original +- Arreglat -> Demanar
-;; Pensar en si borram una figura de l'escena ja no la podem tornar a pintar !!! -> Demanar
-
 (defun inicia-patrons ()
     (putprop 'cub '((-0.5 0 -0.5)(0.5 0 -0.5)(0.5 0 0.5)(-0.5 0 0.5)(-0.5 1 -0.5)(0.5 1 -0.5)(0.5 1 0.5)(-0.5 1 0.5)) 'punts)
     (putprop 'cub '((1 2)(2 3)(3 4)(4 1)(1 5)(2 6)(3 7)(4 8)(5 6)(6 7)(7 8)(8 5)) 'arestes)
